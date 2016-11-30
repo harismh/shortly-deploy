@@ -51,6 +51,13 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+      },
+      push: {
+        command: [
+          'git add .',
+          'git commit -m "auto"',
+          'git push live master'
+        ].join('&&')
       }
     },
   });
@@ -72,8 +79,12 @@ module.exports = function(grunt) {
   // Main grunt tasks
   ////////////////////////////////////////////////////
 
+  grunt.registerTask('foo', [
+    'shell:push'
+  ]);
+
   grunt.registerTask('test', [
-    'mochaTest'
+    'mochaTest', 'server-dev'
   ]);
 
   grunt.registerTask('build', [
