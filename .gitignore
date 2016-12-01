@@ -19,3 +19,7 @@ Icon
 .floobit
 .floo
 .flooignore
+
+local.0
+local.ns
+mongod.lock
