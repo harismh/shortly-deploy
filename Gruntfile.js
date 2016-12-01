@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['public/**/*.js'],
+        dest: 'public/dist/built.js',
+      },
     },
 
     mochaTest: {
@@ -21,15 +28,30 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      target: {
+        files: {
+          'public/dist/source.min.js': ['public/dist/built.js']
+        }
+      }
+    },
+
+    clean: {
+      pre: ['public/dist/source.min.js', 'public/dist/style.min.css'],
+      post: ['public/dist/built.js']
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        'public/**/*.js'
       ]
     },
 
     cssmin: {
+      target: {
+        files: {
+          'public/dist/style.min.css': ['public/style.css']
+        }
+      }
     },
 
     watch: {
@@ -66,6 +88,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
@@ -79,28 +102,30 @@ module.exports = function(grunt) {
   // Main grunt tasks
   ////////////////////////////////////////////////////
 
-  grunt.registerTask('foo', [
+  grunt.registerTask('upload', [
     'shell:push'
   ]);
 
   grunt.registerTask('test', [
-    'mochaTest', 'server-dev'
+    'eslint', 'mochaTest'
   ]);
 
   grunt.registerTask('build', [
+    'clean:pre', 'test', 'concat', 'uglify', 'cssmin', 'clean:post'
   ]);
 
-  grunt.registerTask('upload', function(n) {
+  grunt.registerTask('deploy', function(n) {
     if (grunt.option('prod')) {
       // add your production server task here
+      grunt.task.run(['test', 'build', 'upload']);
     } else {
-      grunt.task.run([ 'server-dev' ]);
+      grunt.task.run([ 'test', 'build' ]);
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
+  // grunt.registerTask('deploy', [
+  //   // add your deploy tasks here
+  // ]);
 
 
 };
