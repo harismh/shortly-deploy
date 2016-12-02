@@ -111,13 +111,13 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'clean:pre', 'test', 'concat', 'uglify', 'cssmin', 'clean:post'
+    'clean:pre', 'concat', 'uglify', 'cssmin', 'clean:post'
   ]);
 
   grunt.registerTask('deploy', function(n) {
     if (grunt.option('prod')) {
       // add your production server task here
-      grunt.task.run(['test', 'build', 'upload']);
+      grunt.task.run(['build', 'upload']);
     } else {
       grunt.task.run([ 'test', 'build' ]);
     }
